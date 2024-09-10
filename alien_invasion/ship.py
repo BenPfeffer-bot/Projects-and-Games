@@ -25,8 +25,10 @@ class Ship:
         self.moving_right = False
         self.moving_left = False
 
-        
-
+    def center_ship(self):
+        """Center la fusée à l'écran."""
+        self.rect.midbottom = self.screen_rect.midbottom
+        self.x = float(self.rect.x)
 
     def update(self):
         """

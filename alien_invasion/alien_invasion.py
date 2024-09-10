@@ -1,9 +1,11 @@
 # Important pckgs imports
 import sys 
 import pygame
+from time import sleep
 
 from settings import Settings
 from ship import Ship
+from game_stats import GameStats
 from bullet import Bullet
 from alien import Alien
 
@@ -26,6 +28,10 @@ class AlienInvasion:
         
         pygame.display.set_caption("Alien Invasion")
 
+        #Créer une instance pour stoocker les stats du jeu.
+        self.stats = GameStats(self)
+
+
         #Définir la couleur d'arrière-plan.
         self.bg_color = (230, 230, 230)
         self.ship = Ship(self)
@@ -39,11 +45,12 @@ class AlienInvasion:
             self._check_events()
             self.ship.update()
             self._update_bullets()
+            self._update_aliens()
             self._update_screen()
             
             # #Supprimer les balles qui ont disparu.
             # for bullet in self.bullets.copy():
-            #     if bullet.rect.bottom <= 0:
+            #     if bullet.rect().bottom <= 0:
             #         self.bullets.remove(bullet)
             #     print(len(self.bullets))
 
@@ -113,6 +120,21 @@ class AlienInvasion:
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
+        self._check_bullet_alien_collisions()
+
+    def _check_bullet_alien_collisions(self):
+        """Répondre aux collisions balle-alien."""
+
+        #Rechercher les balles qui ont touché des aliens.
+        #Si oui, supprimer la balle et l'alien.
+        collisions = pygame.sprite.groupcollide(self.bullets,self.aliens,True,True)
+
+        if not self.aliens:
+            #Détruire les balles existantes et créer une autre armée.
+            self.bullets.empty()
+            self._create_fleet()
+
+
     def _update_screen(self):
         """
         Mettre à jour les images à l'écran et passer 
@@ -124,6 +146,18 @@ class AlienInvasion:
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
         pygame.display.flip()
+
+    def _update_aliens(self):
+        """
+        Mettre à jour les positions de tous les aliens de l'armée.
+        """
+        self._check_fleet_edges()
+        self.aliens.update()
+
+        # Rechercher les ollisions entre un alien et la fusée.
+        if pygame.sprite.spritecollideany(
+            self.ship, self.aliens):
+            self._ship_hit()
 
     def _create_fleet(self):
         """Créer l'armée d'aliens."""
@@ -151,6 +185,39 @@ class AlienInvasion:
         alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number    
         self.aliens.add(alien)
 
+    def _check_fleet_edges(self):
+        """
+        Répondre correctement si des aliens ont atteint un bord.
+        """
+
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+
+    def _change_fleet_direction(self):
+        """
+        Faire descendre l'armée d'un cran et inverser son sens de déplacement.
+        """
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
+
+    def _ship_hit(self):
+        """Répondre à la percussiond e la fusée par un alien."""
+        #Décrementter ships_left.
+        self.stats.ships_left -= 1
+
+        #Supprimer les balles et les aliens restants.
+        self.aliens.empty()
+        self.bullets.empty()
+
+        #Créer une autre armée et center la fusée.
+        self._create_fleet()
+        self.ship.center_ship()
+
+        #Faire une pause
+        sleep(0.5)
 
 
 if __name__ == '__main__':
