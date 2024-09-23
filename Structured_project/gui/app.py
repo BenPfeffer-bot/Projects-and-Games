@@ -31,6 +31,9 @@ from data_processing.report_generator import ReportGenerator
 from utils.helpers import update_report_textbox
 
 
+ctk.set_appearance_mode("Dark")
+ctk.set_default_color_theme("dark-blue")
+
 class DataProcessingApp(ctk.CTk):
     """
     The main GUI application class for the Data Processing Application.
@@ -241,6 +244,7 @@ class DataProcessingApp(ctk.CTk):
             messagebox.showinfo("Success", f"ESMA_SI data saved to {esma_si_output}")
             logging.info(f"ESMA_SI data saved to {esma_si_output}.")
             update_report_textbox(self.report_text, f"ESMA_SI data saved to {esma_si_output}.\n")
+            
 
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred during XML to DataFrame conversion:\n{str(e)}")

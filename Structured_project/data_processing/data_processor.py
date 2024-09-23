@@ -22,6 +22,8 @@ from datetime import datetime, date
 from config.settings import HARD_CODED_DATA
 from utils.helpers import determine_period, update_report_textbox
 
+
+
 class DataProcessor:
     """
     A class to process data for the Data Processing Application.

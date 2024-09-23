@@ -12,6 +12,9 @@ Author: Ben Pfeffer
 Date: 2024-09-23
 """
 
+import customtkinter as ctk
+
+
 # Hard-coded data as a multi-line string
 HARD_CODED_DATA = """
 IssuerCode_1,IssuerCode_2,MTS Market Maker (MM) exemption,AMF exemption
@@ -83,5 +86,7 @@ WALLONN,,No,No
 # Thresholds
 SI_TRADE_COUNT_THRESHOLD = 26
 SI_PERCENTAGE_THRESHOLD = 0.025
+
+
 
 
