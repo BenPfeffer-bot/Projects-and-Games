@@ -1,0 +1,5 @@
+customtkinter
+pandas
+numpy
+openpyxl  # For Excel file reading/writing
+XlsxWriter  # For writing Excel files
